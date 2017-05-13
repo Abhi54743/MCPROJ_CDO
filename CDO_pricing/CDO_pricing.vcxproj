@@ -110,6 +110,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="affiche_gaussian.cpp" />
+    <ClCompile Include="GaussianPricer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MCPROJ_Tools.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GaussianPricer.h" />
+    <ClInclude Include="inverse_function.h" />
+    <ClInclude Include="IPricer.h" />
+    <ClInclude Include="MCPROJ_Tools.h" />
+    <ClInclude Include="Monte_Carlo.h" />
+    <ClInclude Include="zero_search.h" />
+    <ClInclude Include="ziggurat.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
