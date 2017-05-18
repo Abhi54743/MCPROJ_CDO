@@ -5,6 +5,7 @@
 #include<sstream>
 #include<iostream>
 #include "GaussianPricer.h"
+#include "NIGPricer.h"
 #include "zero_search.h"
 
 
@@ -144,15 +145,27 @@ int main() {
 	int Nb_CDS = 100;
 	double	K1 = 0.2;
 	double	K2 = 0.7;
+	double alpha = 0.5;
+	double beta = 1;
 	
+
+
+
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
 
 	std::cout << Gauss.expected_Loss() << std::endl ;
 
-	std::vector<double> vect = Gauss.expected_LossMC(100000);
+	std::vector<double> vect = Gauss.expected_LossMC(10000);
 
 	std::cout << vect[0] <<"    " << vect[1] << "    " << vect[2] << std::endl;
 
+	
+	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta);
+
+	std::vector<double> vect2 = NIG.expected_LossMC(10000);
+
+	std::cout << vect2[0] << "    " << vect2[1] << "    " << vect2[2] << std::endl;
+	
 	int lol;
 	std::cin >> lol;
 
