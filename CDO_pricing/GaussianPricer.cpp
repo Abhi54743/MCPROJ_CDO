@@ -5,6 +5,7 @@ MCPROJ::GaussianPricer::GaussianPricer(double q, double corr, double R, int	Nb_C
 	: m_q(q), m_corr(corr), m_R(R), m_Nb_CDS(Nb_CDS), m_K1(K1), m_K2(K2){
 	
 	m_G = new normal_rv(m_gen, normal_dist(0, 1));
+	m_gen.seed(static_cast<unsigned int>(0));//to remove later
 	
 };
 
@@ -27,9 +28,9 @@ double MCPROJ::GaussianPricer::expected_Loss() {
 
 double MCPROJ::GaussianPricer::operator()() {
 
-	m_gen.seed(static_cast<unsigned int>(0));
+	
 
-	return MCPROJ::percentage_default(*m_G, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2);
+	return MCPROJ::percentage_default(*m_G, *m_G, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2);
 
 };
 

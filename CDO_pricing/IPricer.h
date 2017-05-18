@@ -11,15 +11,7 @@ Version 1.0
 #include <iostream>
 
 #include<iomanip>
-#include <boost/math/distributions/inverse_gaussian.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <memory>
-
-typedef boost::mt19937 generator;
-typedef boost::normal_distribution<double> normal_dist;
-typedef boost::variate_generator< generator&, normal_dist> normal_rv;
+#include "Generators.h"
 
 #pragma once
 #ifndef _IPricer_H

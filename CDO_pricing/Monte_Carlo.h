@@ -32,15 +32,16 @@ namespace MCPROJ {
 	};
 
 	template <typename Gen>
-	double percentage_default(Gen X, double	q, double corr, double R, int Nb_CDS, double K1, double	K2) {
+	double percentage_default(Gen M, Gen X, double	q, double corr, double R, int Nb_CDS, double K1, double	K2) {
 		double C = normal_CDF_inverse(q);
 		double counter = 0;
 		double x;
 
-		double M = X();
+		double Mvalue = M();
+
 		for (int i = 0; i < Nb_CDS; i++) {
 			x = X();
-			if (x < (C - corr*M) / sqrt(1 - corr*corr)) { counter++; }
+			if (x < (C - corr*Mvalue) / sqrt(1 - corr*corr)) { counter++; }
 		}
 		counter = std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0) / (K2 - K1);		//Normalization of counter in K1 and K2
 		//counter *= (1 - R) / Nb_CDS;
