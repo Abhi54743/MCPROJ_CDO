@@ -4,6 +4,7 @@
 #include<cmath>
 #include<sstream>
 #include<iostream>
+#include<vector>
 #include "GaussianPricer.h"
 #include "NIGPricer.h"
 #include "zero_search.h"

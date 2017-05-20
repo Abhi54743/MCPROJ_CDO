@@ -14,8 +14,8 @@ Version 1.0
 #include "MCPROJ_Tools.h"
 
 #pragma once
-#ifndef _GAUSSIAN_PRICER_H
-#define _GAUSSIAN_PRICER_H
+#ifndef _NIG_PRICER_H
+#define _NIG_PRICER_H
 
 namespace MCPROJ {
 
@@ -62,6 +62,6 @@ namespace MCPROJ {
 }// end namespace MCPROJ
 
 
-#endif // !_GAUSSIAN_PRICER_H
+#endif // !_NIG_PRICER_H
 
 

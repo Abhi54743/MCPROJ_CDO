@@ -22,7 +22,12 @@ double MCPROJ::NIGPricer::operator()() {
 
 	return MCPROJ::percentage_default(m_NIG_M, m_NIG_X, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2);
 
-};
+}
+double MCPROJ::NIGPricer::expected_Loss()
+{
+	return 0.0;
+}
+;
 
 std::vector<double> MCPROJ::NIGPricer::expected_LossMC(int N) {
 
