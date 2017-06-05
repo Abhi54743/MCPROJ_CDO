@@ -7,7 +7,13 @@ Date: 11/03/2017
 
 Version 1.0
 */
-
+#include<cstdio>
+#include<cmath>
+#include<sstream>
+#include<iostream>
+#include<iomanip>
+#include<cstdint>
+#include<vector>
 
 #pragma once
 #ifndef _MCPROJ_TOOLS_H
@@ -29,7 +35,9 @@ namespace MCPROJ {
 
 	double normal_CDF_inverse(double p);
 
+	void gauleg(double x1, double x2, std::vector<double> & abs, std::vector<double> & weight);
 
+	double inverseIG(double x, std::vector<double> listofvalues);
 
 
 

@@ -34,8 +34,9 @@ namespace MCPROJ {
 				  int		Nb_CDS,
 				  double	K1,
 				  double	K2,
-				  double alpha,
-				  double beta);
+				  double	alpha,
+				  double	beta,
+				  int		gridSize);
 
 		double operator()();
 
@@ -45,6 +46,7 @@ namespace MCPROJ {
 
 	private:
 		double				m_q;			// default probability
+		double			    m_C;
 		double				m_corr;			// correlation between CDS
 		double				m_R;			// recovery rate
 		int					m_Nb_CDS;		// Number of CDS
@@ -52,8 +54,8 @@ namespace MCPROJ {
 		double				m_K2;			// highest default probability of the selected tranche
 		double				m_alpha;		// NIG parameter
 		double				m_beta;			// NIG parameter
-		NIG_rv				m_NIG_X;		// normal inverse gaussian random variable generator for X
-		NIG_rv				m_NIG_M;		// normal inverse gaussian random variable generator for M
+		NIG_rv		*		m_NIG_X;		// normal inverse gaussian random variable generator for X
+		NIG_rv		*		m_NIG_M;		// normal inverse gaussian random variable generator for M
 
 
 	};

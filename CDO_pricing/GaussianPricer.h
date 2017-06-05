@@ -43,6 +43,7 @@ namespace MCPROJ{
 
 	private:
 		double				m_q;			// default probability
+		double				m_C;
 		double				m_corr;			// correlation between CDS
 		double				m_R;			// recovery rate
 		int					m_Nb_CDS;		// Number of CDS

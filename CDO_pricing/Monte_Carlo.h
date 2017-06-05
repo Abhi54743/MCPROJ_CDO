@@ -18,7 +18,7 @@ namespace MCPROJ {
 	template <typename Gen>
 	std::vector<double> monte_carlo(int n, Gen X)
 	{
-		std::vector<double> result(3, 0.);
+		std::vector<double> result(3, 0.0);
 		double x;
 		for (int j = 0; j < n; j++) {
 			x = X(); // restriction sur X...
@@ -32,8 +32,7 @@ namespace MCPROJ {
 	};
 
 	template <typename Gen>
-	double percentage_default(Gen M, Gen X, double	q, double corr, double R, int Nb_CDS, double K1, double	K2) {
-		double C = normal_CDF_inverse(q);
+	double percentage_default(Gen M, Gen X, double	C, double corr, double R, int Nb_CDS, double K1, double	K2) {
 		double counter = 0;
 		double x;
 

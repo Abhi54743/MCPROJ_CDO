@@ -1,12 +1,6 @@
 #define _USE_MATH_DEFINES
 
 
-#include<cstdio>
-#include<cmath>
-#include<sstream>
-#include<iostream>
-#include<iomanip>
-#include <cstdint>
 #include "MCPROJ_Tools.h"
 
 static double MCPROJ::f(double x, double y, double aprime, double bprime, double rho)
@@ -98,7 +92,7 @@ double MCPROJ::BivariateNormalCDF(double a, double b, double rho) {
 	}
 	else
 	{
-		std::cout << "This part of the code should never be reached." << std::endl;
+		throw std::exception("This part of the code should never be reached: Bivariate Normal CDF");
 
 	}
 }
@@ -138,3 +132,53 @@ double MCPROJ::normal_CDF_inverse(double p)
 		return RationalApproximation(sqrt(-2.0*log(1 - p)));
 	}
 }
+
+
+void MCPROJ::gauleg(double x1, double x2, std::vector<double> & abs, std::vector<double> & weight) {
+
+	const double EPS = 1.0e-14;			//Relative precision
+	size_t n = abs.size(), m = (n+1)/2;
+
+	double xm = 0.5*(x2 + x1);
+	double xl = 0.5*(x2 - x1);
+
+	double p1(0.0), p2(0.0), p3(0.0), pp(0.0);
+	double z1(0.0), z(0.0);
+
+	for (size_t i = 0; i < m; i++) {
+		z = cos(M_PI*(i + 0.75)/(n+0.5));			//starting approximation for root
+
+		do {
+			p1 = 1.0;
+			p2 = 0.0;
+
+			for (size_t j = 0; j < n; j++) {
+				p3 = p2;
+				p2 = p1;
+				p1 = ((2.0*j+1.0)*z*p2 -j*p3)/ (j+1);
+			}
+
+			//p1 is now the required legendre polynomial at z.
+			//pp, its derivative, may be found via a standard relationship.
+
+			pp = n*(z*p1 - p2) / (z*z - 1.0);
+			z1 = z;
+			z = z1 - p1 / pp;					// Newton's method
+
+		} while (std::fabs(z - z1) > EPS);
+
+		abs[i] = xm - xl*z;
+		abs[n - 1 - i] = xm + xl*z;
+		weight[i] = 2.0*xl / ((1.0 - z*z)*pp*pp);
+		weight[n - 1 - i] = weight[i];
+
+	}
+
+}
+
+double MCPROJ::inverseIG(double x, std::vector<double> listofvalues)
+{
+	if (x < 0 || x > 1) { throw std::exception("wrong input value for inversion"); }
+	return listofvalues[floor(x*listofvalues.size())];
+}
+

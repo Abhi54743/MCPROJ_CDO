@@ -148,8 +148,10 @@ int main() {
 	int Nb_CDS = 100;
 	double	K1 = 0.2;
 	double	K2 = 0.7;
-	double alpha = 0.5;
-	double beta = 1;
+	double alpha = 1;
+	double beta = 0.5;
+
+	int gridSize = 1000;
 	
 
 
@@ -162,8 +164,9 @@ int main() {
 
 	std::cout << vect[0] <<"    " << vect[1] << "    " << vect[2] << std::endl;
 
-	
-	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta);
+
+
+	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
 
 	std::vector<double> vect2 = NIG.expected_LossMC(10000);
 
