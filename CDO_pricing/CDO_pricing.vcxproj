@@ -116,6 +116,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MCPROJ_Tools.cpp" />
     <ClCompile Include="NIGPricer.cpp" />
+    <ClCompile Include="SteinPricer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GaussianPricer.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="MCPROJ_Tools.h" />
     <ClInclude Include="Monte_Carlo.h" />
     <ClInclude Include="NIGPricer.h" />
+    <ClInclude Include="SteinPricer.h" />
     <ClInclude Include="zero_search.h" />
     <ClInclude Include="ziggurat.h" />
   </ItemGroup>

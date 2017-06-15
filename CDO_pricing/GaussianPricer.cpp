@@ -20,7 +20,6 @@ double MCPROJ::GaussianPricer::expected_Loss() {
 	else {
 		double K11 = normal_CDF_inverse(m_K1 / (1 - m_R));
 		double K21 = normal_CDF_inverse(m_K2 / (1 - m_R));
-		double toto= (BivariateNormalCDF(-K11, m_C, -sqrt(1 - m_corr*m_corr)) - BivariateNormalCDF(-K21, m_C, -sqrt(1 - m_corr*m_corr))) * (1 - m_R) / (m_K2 - m_K1);
 		return (BivariateNormalCDF(-K11, m_C, -sqrt(1 - m_corr*m_corr)) - BivariateNormalCDF(-K21, m_C, -sqrt(1 - m_corr*m_corr))) * (1 - m_R) / (m_K2 - m_K1);
 	}
 

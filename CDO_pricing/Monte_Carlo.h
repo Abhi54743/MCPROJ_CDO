@@ -42,7 +42,7 @@ namespace MCPROJ {
 			x = X();
 			if (x < (C - corr*Mvalue) / sqrt(1 - corr*corr)) { counter++; }
 		}
-		counter = std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0) / (K2 - K1);		//Normalization of counter in K1 and K2
+		counter = std::min(std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0), K2 - K1) / (K2 - K1);		//Normalization of counter in K1 and K2
 		//counter *= (1 - R) / Nb_CDS;
 		return counter;
 	};

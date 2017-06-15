@@ -29,6 +29,9 @@
     <ClCompile Include="NIGPricer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="SteinPricer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inverse_function.h">
@@ -56,6 +59,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NIGPricer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SteinPricer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
