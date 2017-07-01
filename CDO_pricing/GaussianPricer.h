@@ -12,6 +12,7 @@ Version 1.0
 #include "IPricer.h"
 #include "Monte_Carlo.h"
 #include "MCPROJ_Tools.h"
+#include "QMCGenerators.h"
 
 #pragma once
 #ifndef _GAUSSIAN_PRICER_H
@@ -41,6 +42,10 @@ namespace MCPROJ{
 
 		std::vector<double> expected_LossMC(int N) ;
 
+		double expected_LossQMC(int N, std::string Qtype);
+
+		double percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double	K2);
+
 	private:
 		double				m_q;			// default probability
 		double				m_C;
@@ -51,6 +56,8 @@ namespace MCPROJ{
 		double				m_K2;			// highest default probability of the selected tranche
 		generator			m_gen;			// uniform generator
 		normal_rv	*		m_G;			// normal random variable generator pointer
+		Halton2DGauss	*	m_HaltonGauss;		// Halton QMC no. generator
+		
 	
 	
 	};

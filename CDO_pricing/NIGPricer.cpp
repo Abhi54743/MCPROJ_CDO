@@ -18,6 +18,9 @@ MCPROJ::NIGPricer::NIGPricer(double q, double corr, double R, int	Nb_CDS, double
 	NIG_rv  NIG_A(alpha/corr, beta/corr, -beta*gamma*gamma / (alpha*alpha*corr), gamma*gamma*gamma / (alpha*alpha*corr), gridSize);
 
 	m_C = NIG_A.inverseCDF(q); //
+
+	m_Halton2DNIG = new Halton2DNIG(alpha, factor*alpha, beta, factor*beta, -beta*gamma*gamma / (alpha*alpha), -factor*beta*gamma*gamma / (alpha*alpha),
+									gamma*gamma*gamma / (alpha*alpha), factor*gamma*gamma*gamma / (alpha*alpha), gridSize);
 };
 
 
@@ -41,4 +44,35 @@ std::vector<double> MCPROJ::NIGPricer::expected_LossMC(int N) {
 
 	return MCPROJ::monte_carlo(N, NIG);
 
+};
+
+double MCPROJ::NIGPricer::expected_LossQMC(int N, std::string Qtype)
+{
+	double result = 0.0;
+	double x;
+
+	if (Qtype == "Halton")
+		for (int j = 0; j < N; j++) {
+			x = percentage_defaultQMCH(m_C, m_corr, m_R, m_Nb_CDS, m_K1, m_K2); // restriction sur X...
+			result += x;
+		}
+
+
+	result /= (double)N;
+	return result;
+};
+
+double MCPROJ::NIGPricer::percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double	K2) {
+	double counter = 0;
+	double x;
+
+	double Mvalue = m_Halton2DNIG->operator()()[0];
+
+	for (int i = 0; i < Nb_CDS; i++) {
+		x = m_Halton2DNIG->operator()()[1];
+		if (x < (C - corr*Mvalue) / sqrt(1 - corr*corr)) { counter++; }
+	}
+	counter = std::min(std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0), K2 - K1) / (K2 - K1);		//Normalization of counter in K1 and K2
+																									//counter *= (1 - R) / Nb_CDS;
+	return counter;
 };

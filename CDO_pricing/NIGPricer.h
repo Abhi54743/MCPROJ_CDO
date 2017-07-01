@@ -12,6 +12,7 @@ Version 1.0
 #include "IPricer.h"
 #include "Monte_Carlo.h"
 #include "MCPROJ_Tools.h"
+#include "QMCGenerators.h"
 
 #pragma once
 #ifndef _NIG_PRICER_H
@@ -44,6 +45,10 @@ namespace MCPROJ {
 
 		std::vector<double> expected_LossMC(int N);
 
+		double expected_LossQMC(int N, std::string Qtype);
+
+		double percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double K2);
+
 	private:
 		double				m_q;			// default probability
 		double			    m_C;
@@ -56,6 +61,7 @@ namespace MCPROJ {
 		double				m_beta;			// NIG parameter
 		NIG_rv		*		m_NIG_X;		// normal inverse gaussian random variable generator for X
 		NIG_rv		*		m_NIG_M;		// normal inverse gaussian random variable generator for M
+		Halton2DNIG *	    m_Halton2DNIG;  // 2D NIG QMC 
 
 
 	};

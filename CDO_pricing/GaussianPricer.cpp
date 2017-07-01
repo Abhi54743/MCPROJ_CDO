@@ -7,7 +7,7 @@ MCPROJ::GaussianPricer::GaussianPricer(double q, double corr, double R, int	Nb_C
 
 	m_G = new normal_rv(m_gen, normal_dist(0, 1));
 	m_gen.seed(static_cast<unsigned int>(0));//to remove later
-	
+	m_HaltonGauss = new Halton2DGauss();
 
 	m_C = normal_CDF_inverse(q);
 
@@ -40,4 +40,35 @@ std::vector<double> MCPROJ::GaussianPricer::expected_LossMC(int N) {
 
 	return MCPROJ::monte_carlo(N, gauss);
 
+}
+double MCPROJ::GaussianPricer::expected_LossQMC(int N, std::string Qtype)
+{
+	double result = 0.0;
+	double x;
+
+	if(Qtype=="Halton")
+		for (int j = 0; j < N; j++) {
+			x = percentage_defaultQMCH(m_C, m_corr, m_R, m_Nb_CDS, m_K1, m_K2); // restriction sur X...
+			result += x;
+		}
+
+
+	result /= (double)N;
+	return result;
 };
+
+double MCPROJ::GaussianPricer::percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double	K2) {
+	double counter = 0;
+	double x;
+
+	double Mvalue = m_HaltonGauss->operator()()[0];
+
+	for (int i = 0; i < Nb_CDS; i++) {
+		x = m_HaltonGauss->operator()()[1];
+		if (x < (C - corr*Mvalue) / sqrt(1 - corr*corr)) { counter++; }
+	}
+	counter = std::min(std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0), K2 - K1) / (K2 - K1);		//Normalization of counter in K1 and K2
+																									//counter *= (1 - R) / Nb_CDS;
+	return counter;
+};
+

@@ -32,6 +32,9 @@
     <ClCompile Include="SteinPricer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="QMCGenerators.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inverse_function.h">
@@ -62,6 +65,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SteinPricer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QMCGenerators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

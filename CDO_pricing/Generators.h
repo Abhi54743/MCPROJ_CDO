@@ -16,6 +16,8 @@ Version 1.0
 #include <boost/random/variate_generator.hpp>
 #include <boost/math/tools/roots.hpp>
 #include <boost/math/distributions/inverse_gaussian.hpp>
+#include <boost/math/distributions/poisson.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 #include <memory>
 #include "MCPROJ_Tools.h"
 #include <vector>
@@ -24,6 +26,7 @@ Version 1.0
 typedef boost::mt19937 generator;
 typedef boost::normal_distribution<double> normal_dist;
 typedef std::uniform_real_distribution<double> uni_01_dist;
+typedef boost::math::poisson_distribution<double> poisson_dist;
 typedef boost::variate_generator< generator&, normal_dist> normal_rv;
 typedef boost::math::inverse_gaussian_distribution<double> inverse_gaussian_dist;
 
