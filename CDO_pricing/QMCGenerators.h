@@ -106,7 +106,7 @@ namespace MCPROJ {
 		size_t								m_base_1;
 		size_t								m_base_2;
 		std::vector<std::vector<int>>		m_previous;
-		int									m_decimals
+		int									m_decimals;
 
 	public:
 		//constructor
@@ -131,7 +131,7 @@ namespace MCPROJ {
 
 		std::vector<int> double2piadic(double x, size_t base);
 
-		double piadic2double(std::vector<int> p, site_t base);
+		double padic2double(std::vector<int> p, size_t base);
 
 		std::vector<double> operator()();
 
@@ -171,7 +171,7 @@ namespace MCPROJ {
 
 	public:
 		//constructor
-		Halton2DNIG(double alpha_1, double alpha_2,
+		Kakutani2DNIG(double alpha_1, double alpha_2,
 					double beta_1, double beta_2,
 					double mu_1, double mu_2,
 					double delta_1, double delta_2, 
@@ -184,7 +184,7 @@ namespace MCPROJ {
 			if (abs(beta_1) > alpha_1 || abs(beta_2) > alpha_2) { throw std::exception(" value of abs(beta) is greater than alpha "); }
 
 			else if (delta_1 < 1e-30 || delta_2 < 1e-30) { throw std::exception(" value of delta is negative "); }
-			m_K2D = new Kakutani2D(base_1, base_2);
+			m_K2D = new Kakutani2D(base_1, base_2, 10);
 			m_KG2D = new Kakutani2DGauss(0.0, 1.0, base_3, base_4);
 
 			double gamma_1 = sqrt(alpha_1*alpha_1 - beta_1*beta_1);
