@@ -82,7 +82,8 @@ std::vector<int> MCPROJ::Kakutani2D::double2piadic(double x, size_t base)
 	std::vector<int> res(m_decimals);
 	for (int i = 0; i < m_decimals; i++)
 	{
-		res[i] = (int)floor(x * base);
+		x *= base;
+		res[i] = (int)floor(x);
 		x -= res[i];
 	}
 	return res;

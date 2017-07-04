@@ -112,18 +112,18 @@ namespace MCPROJ {
 		//constructor
 		Kakutani2D(size_t base_1, size_t base_2, int N) :m_base_1(base_1), m_base_2(base_2), m_index(1) , m_decimals(N)
 		{
-			m_previous[0] = std::vector<int>(N);
-			m_previous[1] = std::vector<int>(N);
+			m_previous.push_back(std::vector<int>(N));
+			m_previous.push_back(std::vector<int>(N));
 
 			double x0, x1;
-			if ((base_1 = 5) || (base_1 == 7))
+			if ((base_1 == 5) || (base_1 == 7))
 				x0 = (2 * base_1 - 1 - sqrt((base_1 + 2)*(base_1 + 2) + 4 * base_1)) / 3.0;
 			else
-				x0 = 1 / (double)base_1;
-			if ((base_2 = 5) || (base_2 == 7))
+				x0 = 1 / 5.0;
+			if ((base_2 == 5) || (base_2 == 7))
 				x1 = (2 * base_2 - 1 - sqrt((base_2 + 2)*(base_2 + 2) + 4 * base_2)) / 3.0;
 			else
-				x1 = 1 / (double)base_2;
+				x1 = 1 / 5.0;
 
 			m_previous[0] = double2piadic(x0, m_base_1);
 			m_previous[1] = double2piadic(x1, m_base_2);
@@ -136,11 +136,12 @@ namespace MCPROJ {
 		std::vector<double> operator()();
 
 	};
+	typedef std::shared_ptr<Kakutani2D> Kakutani2DPtr;
 
 	class Kakutani2DGauss {
 
 		size_t			m_index;
-		Kakutani2D	*	m_K2D;
+		Kakutani2D   *	m_K2D;
 		double			m_mu;
 		double			m_sigma;
 

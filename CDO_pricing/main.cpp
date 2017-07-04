@@ -176,8 +176,8 @@ int main() {
 
 	std::cout << vect4[0] << "    " << vect4[1] << "    " << vect4[2] << std::endl;
 	
+	
 	*/
-
 
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
 
@@ -207,10 +207,20 @@ int main() {
 	std::cout << vect_668 << std::endl;
 
 	/**************************************/
+	/*
+	Kakutani2D KGen(2, 3, 10);
+	for (int i = 0; i < 30; i++) {
+		std::vector<double> lol = KGen();
+		std::cout<<lol[0]<< " \t " <<lol[1]<<std::endl;
+	}
 
-	Halton1D HGen(2);
+	std::vector<int> p = KGen.double2piadic(1 / 5.0 + 3 / 25.0, 5);
+	for (int i = 0; i < p.size(); i++) {
+		std::cout << p[i] << std::endl;
+	}
 
-	
+	double a = KGen.padic2double(p, 5);
+	std::cout << a << std::endl;*/
 	int lol;
 	std::cin >> lol;
 
