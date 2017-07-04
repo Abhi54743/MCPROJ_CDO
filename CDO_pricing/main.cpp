@@ -176,7 +176,7 @@ int main() {
 
 	std::cout << vect4[0] << "    " << vect4[1] << "    " << vect4[2] << std::endl;
 	
-	
+	*/
 
 
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
@@ -186,8 +186,11 @@ int main() {
 	std::vector<double> vect = Gauss.expected_LossMC(10000);
 	std::cout << vect[0] << "    " << vect[1] << "    " << vect[2] << std::endl;
 
-	double rofl = Gauss.expected_LossQMC(10000, "Halton");
-	std::cout << rofl << std::endl;*/
+	double rofl = Gauss.expected_LossQMC(100, "Halton");
+	std::cout << rofl << std::endl;
+
+	double rofl1 = Gauss.expected_LossQMC(100, "Kakutani");
+	std::cout << rofl1 << std::endl;
 
 	
 
@@ -196,9 +199,12 @@ int main() {
 	std::vector<double> vect2 = NIG.expected_LossMC(100);
 	std::cout << vect2[0] << "    " << vect2[1] << "    " << vect2[2] << std::endl;
 
-
+	
 	double vect_667 = NIG.expected_LossQMC(100, "Halton");
 	std::cout << vect_667 << std::endl;
+
+	double vect_668 = NIG.expected_LossQMC(100, "Kakutani");
+	std::cout << vect_668 << std::endl;
 
 	/**************************************/
 

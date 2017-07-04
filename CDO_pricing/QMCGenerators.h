@@ -7,7 +7,7 @@
 namespace MCPROJ {
 
 	class Halton1D {
-
+		
 		size_t		m_index;
 		size_t		m_base;
 
