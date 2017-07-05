@@ -22,6 +22,8 @@ Version 1.0
 #include "MCPROJ_Tools.h"
 #include <vector>
 #include <random>
+#include <iostream>
+#include <fstream>
 
 typedef boost::mt19937 generator;
 typedef boost::normal_distribution<double> normal_dist;

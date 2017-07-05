@@ -5,6 +5,7 @@
 #include "NIGPricer.h"
 #include "zero_search.h"
 #include "QMCGenerators.h"
+#include "Printing.h"
 
 
 using namespace MCPROJ;
@@ -12,42 +13,7 @@ using namespace MCPROJ;
 //This is the main
 
 /*
-template <typename Gen>
-class percent_default_vr {
-public:
-	percent_default_vr(Gen X, double K1, double K2, std::vector<double> theta) :X(X), K1(K1), K2(K2), theta(theta) {};
-	~percent_default_vr() {};
-	double operator()() {
-		double C = normal_CDF_inverse(q);
-		double counter = 0;
-		double x;
-
-		double M = X();
-		double theta_prod_X = theta[0]*M;
-		double scalar_pdt_theta = theta[0] * theta[0];
-
-		//if(Gen.name== normal)
-		
-		for (int i = 0; i < Nb_CDS; i++) {
-			x = X();
-			if (x+theta[i+1] < (C - corr*(M+theta[0])) / sqrt(1 - corr*corr)) { counter ++; }
-			theta_prod_X += x*theta[1+i];
-			scalar_pdt_theta += theta[1+i] * theta[1+i];
-		}
-
-		counter *= exp(-theta_prod_X-(scalar_pdt_theta / 2));
-		counter = std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0) / (K2 - K1);			//Normalization of counter in K1 and K2
-		return counter;
-	}
-private:
-	Gen X;
-	double K1, K2;
-	std::vector<double> theta;
-};
-
-
-
-
+THIS MAY BE USEFUL FOR NEWTON, BUT PROBABLY NOT. KEEP IT FOR NOW
 template <typename Gen>
 std::vector<double> grad_f(int i, std::vector<double> theta, std::vector<std::vector<double>> stored,
 							int Nb_CDS, Gen X, double q, double corr, double K1, double K2) {//ALL these will be attributes 
@@ -99,8 +65,6 @@ std::vector<double> test(std::vector<double> theta, std::vector<std::vector<doub
 template <typename Gen>
 std::vector<double> optimizer_Theta(int Nb_CDS, Gen X, double q, double corr, double K1, double K2) //ALL these will be attributes
 {
-
-
 	double C = normal_CDF_inverse(q);
 	std::vector<std::vector<double>> stored (1000, std::vector<double>(Nb_CDS+1));
 	for (int i = 0; i < 1000; i++) {
@@ -139,16 +103,16 @@ std::vector<double> optimizer_Theta(int Nb_CDS, Gen X, double q, double corr, do
 
 int main() {
 	
-	double q = 0.5;   //default probability
+	double q = 0.5;		//default probability
 	double corr = 0.3;	//correlation between CDS
 	double R = 0;		//recovery rate
-	int		Nb_CDS = 100;
-	double	K1 = 0.2;
-	double	K2 = 0.7;
+	int	   Nb_CDS = 100;
+	double K1 = 0.2;
+	double K2 = 0.7;
 	double alpha = 1;
 	double beta = 0.5;
 
-	int gridSize = 1000;
+	int gridSize = 1000; //for NIG
 
 	/*
 
@@ -245,6 +209,135 @@ int main() {
 	
 	std::cout << expected_loss(0.2, 0.7) << std::endl;
 	*/
+
+	
+	/**************************************A SORT OF FINAL MAIN**************************************/
+
+	/*
+
+	Printer Printer;
+	//PART 1: CLOSED FORMULA AND MONTECARLO
+	//1.A.I: GUASSIAN COPULA, R = 0
+
+	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
+
+	//close formula
+	clock_t begin = clock();
+
+	double res = Gauss.expected_Loss();
+
+	clock_t end = clock();
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+	Printer.printOutClosedFormula(res, "Gaussian", elapsed_secs);
+
+	//montecarlo
+	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
+
+	for (int j = 0; j < sizeof(mcIterations); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "Gaussian", mcIterations[j], elapsed_secs);
+	}
+
+	//1.A.II: GUASSIAN COPULA, R != 0
+
+	R = 0.2;//to decide
+
+	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
+
+	//close formula
+	clock_t begin = clock();
+
+	double res = Gauss.expected_Loss();
+
+	clock_t end = clock();
+	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+	Printer.printOutClosedFormula(res, "Gaussian", elapsed_secs);
+
+	//montecarlo
+	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
+
+	for (int j = 0; j < sizeof(mcIterations); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "Gaussian", mcIterations[j], elapsed_secs);
+	}
+
+	//1.A.III: GUASSIAN COPULA, R = 0 and R!=0, VARIANCE REDUCTION
+	
+	//TO DO
+	
+
+	//1.B.I: NIG COPULA, R = 0
+
+	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
+
+	//montecarlo
+	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
+
+	for (int j = 0; j < sizeof(mcIterations); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "NIG", mcIterations[j], elapsed_secs);
+	}
+
+	//1.B.II: NIG COPULA, R != 0
+
+	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
+
+	//montecarlo
+	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
+
+	for (int j = 0; j < sizeof(mcIterations); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "NIG", mcIterations[j], elapsed_secs);
+	}
+
+	//1.C: Other parameters effect
+	
+	//TO DECIDE
+	
+
+
+	//2.A: QMC Gaussian
+	
+	//To decide if modify in order to generate psuedo-number BEFORE pricing or DURING pricing (now it is during pricing,
+	//then QMC is not faster than MC, it is even slower)
+	
+	*/
+
+	/*************************************************************************************************************/
+
+
+
+
 
 
 }

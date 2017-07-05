@@ -80,10 +80,7 @@ std::vector<double> MCPROJ::Halton2DNIG::operator()()
 std::vector<int> MCPROJ::Kakutani2D::double2piadic(double x, size_t base)
 {
 	std::vector<int> res(m_decimals);
-<<<<<<< HEAD
-	div_t divresult;
-=======
->>>>>>> 3990104cd4f2e7dd55fef1ca0828df8f322b63a2
+
 	for (int i = 0; i < m_decimals; i++)
 	{
 		x *= base;
