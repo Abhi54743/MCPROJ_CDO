@@ -78,5 +78,3 @@ namespace MCPROJ {
 }//end namespace MCPROJ
 
 #endif // !_GENERATORS_H
-
-

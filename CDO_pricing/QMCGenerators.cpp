@@ -81,7 +81,7 @@ std::vector<double> MCPROJ::Kakutani2D::double2piadic(double x, size_t base)
 {
 	std::vector<int> res(m_decimals);
 	div_t divresult;
-	for (int i = 0; i < m_deciamls; i++)
+	for (int i = 0; i < m_decimals; i++)
 	{
 		res[i] = (int)floor(x * base);
 		x -= res[i];
@@ -93,7 +93,7 @@ double MCPROJ::Kakutani2D::piadic2double(std::vector<int> p, site_t base)
 {
 	double res = 0.0;
 
-	for (int i = 0; i < m_deciamls; i++)
+	for (int i = 0; i < m_decimals; i++)
 	{
 		res += p[i] * pow(base, -(i + 1));
 	}
