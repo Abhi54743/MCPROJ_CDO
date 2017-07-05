@@ -46,6 +46,8 @@ namespace MCPROJ{
 
 		double percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double	K2);
 
+		double percentage_defaultQMCK(double C, double corr, double R, int Nb_CDS, double K1, double K2);
+
 	private:
 		double				m_q;			// default probability
 		double				m_C;
@@ -57,6 +59,7 @@ namespace MCPROJ{
 		generator			m_gen;			// uniform generator
 		normal_rv	*		m_G;			// normal random variable generator pointer
 		Halton2DGauss	*	m_HaltonGauss;		// Halton QMC no. generator
+		Kakutani2DGauss	*	m_KakutaniGauss;		// Halton QMC no. generator
 		
 	
 	

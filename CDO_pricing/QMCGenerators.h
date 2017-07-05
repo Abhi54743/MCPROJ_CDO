@@ -7,7 +7,7 @@
 namespace MCPROJ {
 
 	class Halton1D {
-
+		
 		size_t		m_index;
 		size_t		m_base;
 
@@ -106,24 +106,24 @@ namespace MCPROJ {
 		size_t								m_base_1;
 		size_t								m_base_2;
 		std::vector<std::vector<int>>		m_previous;
-		int									m_decimals
+		int									m_decimals;
 
 	public:
 		//constructor
 		Kakutani2D(size_t base_1, size_t base_2, int N) :m_base_1(base_1), m_base_2(base_2), m_index(1) , m_decimals(N)
 		{
-			m_previous[0] = std::vector<int>(N);
-			m_previous[1] = std::vector<int>(N);
+			m_previous.push_back(std::vector<int>(N));
+			m_previous.push_back(std::vector<int>(N));
 
 			double x0, x1;
-			if ((base_1 = 5) || (base_1 == 7))
+			if ((base_1 == 5) || (base_1 == 7))
 				x0 = (2 * base_1 - 1 - sqrt((base_1 + 2)*(base_1 + 2) + 4 * base_1)) / 3.0;
 			else
-				x0 = 1 / (double)base_1;
-			if ((base_2 = 5) || (base_2 == 7))
+				x0 = 1 / 5.0;
+			if ((base_2 == 5) || (base_2 == 7))
 				x1 = (2 * base_2 - 1 - sqrt((base_2 + 2)*(base_2 + 2) + 4 * base_2)) / 3.0;
 			else
-				x1 = 1 / (double)base_2;
+				x1 = 1 / 5.0;
 
 			m_previous[0] = double2piadic(x0, m_base_1);
 			m_previous[1] = double2piadic(x1, m_base_2);
@@ -131,16 +131,17 @@ namespace MCPROJ {
 
 		std::vector<int> double2piadic(double x, size_t base);
 
-		double piadic2double(std::vector<int> p, site_t base);
+		double padic2double(std::vector<int> p, size_t base);
 
 		std::vector<double> operator()();
 
 	};
+	typedef std::shared_ptr<Kakutani2D> Kakutani2DPtr;
 
 	class Kakutani2DGauss {
 
 		size_t			m_index;
-		Kakutani2D	*	m_K2D;
+		Kakutani2D   *	m_K2D;
 		double			m_mu;
 		double			m_sigma;
 
@@ -171,7 +172,7 @@ namespace MCPROJ {
 
 	public:
 		//constructor
-		Halton2DNIG(double alpha_1, double alpha_2,
+		Kakutani2DNIG(double alpha_1, double alpha_2,
 					double beta_1, double beta_2,
 					double mu_1, double mu_2,
 					double delta_1, double delta_2, 
@@ -184,7 +185,7 @@ namespace MCPROJ {
 			if (abs(beta_1) > alpha_1 || abs(beta_2) > alpha_2) { throw std::exception(" value of abs(beta) is greater than alpha "); }
 
 			else if (delta_1 < 1e-30 || delta_2 < 1e-30) { throw std::exception(" value of delta is negative "); }
-			m_K2D = new Kakutani2D(base_1, base_2);
+			m_K2D = new Kakutani2D(base_1, base_2, 10);
 			m_KG2D = new Kakutani2DGauss(0.0, 1.0, base_3, base_4);
 
 			double gamma_1 = sqrt(alpha_1*alpha_1 - beta_1*beta_1);

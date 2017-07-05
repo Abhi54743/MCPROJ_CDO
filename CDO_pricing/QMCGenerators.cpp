@@ -77,19 +77,23 @@ std::vector<double> MCPROJ::Halton2DNIG::operator()()
 	return r;
 }
 
-std::vector<double> MCPROJ::Kakutani2D::double2piadic(double x, size_t base)
+std::vector<int> MCPROJ::Kakutani2D::double2piadic(double x, size_t base)
 {
 	std::vector<int> res(m_decimals);
+<<<<<<< HEAD
 	div_t divresult;
+=======
+>>>>>>> 3990104cd4f2e7dd55fef1ca0828df8f322b63a2
 	for (int i = 0; i < m_decimals; i++)
 	{
-		res[i] = (int)floor(x * base);
+		x *= base;
+		res[i] = (int)floor(x);
 		x -= res[i];
 	}
 	return res;
 }
 
-double MCPROJ::Kakutani2D::piadic2double(std::vector<int> p, site_t base)
+double MCPROJ::Kakutani2D::padic2double(std::vector<int> p, size_t base)
 {
 	double res = 0.0;
 
@@ -114,12 +118,12 @@ std::vector<double> MCPROJ::Kakutani2D::operator()()
 		if (m_previous[0][i] == m_base_1)
 		{
 			m_previous[0][i] = 0;
-			m_previous[0][i + 1] + 1;
+			m_previous[0][i + 1] += 1;
 		}
 		if (m_previous[1][i] == m_base_2)
 		{
 			m_previous[1][i] = 0;
-			m_previous[1][i + 1] + 1;
+			m_previous[1][i + 1] += 1;
 		}
 	}
 	if (m_previous[0][m_decimals - 1] == m_base_1)

@@ -49,6 +49,8 @@ namespace MCPROJ {
 
 		double percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double K2);
 
+		double percentage_defaultQMCK(double C, double corr, double R, int Nb_CDS, double K1, double K2);
+
 	private:
 		double				m_q;			// default probability
 		double			    m_C;
@@ -62,6 +64,7 @@ namespace MCPROJ {
 		NIG_rv		*		m_NIG_X;		// normal inverse gaussian random variable generator for X
 		NIG_rv		*		m_NIG_M;		// normal inverse gaussian random variable generator for M
 		Halton2DNIG *	    m_Halton2DNIG;  // 2D NIG QMC 
+		Kakutani2DNIG  *       m_Kakutani2DNIG;// 2D NIG QMC 
 
 
 	};
