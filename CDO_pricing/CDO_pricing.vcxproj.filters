@@ -38,6 +38,9 @@
     <ClCompile Include="Printing.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Newton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inverse_function.h">
@@ -74,6 +77,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Printing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Newton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -47,6 +47,22 @@ namespace MCPROJ {
 		return counter;
 	};
 
+	template <typename Gen>
+	double percentage_defaultVR(Gen M, Gen X, double C, double corr, double R, int Nb_CDS, double K1, double	K2, double thetaCommon, double thetaTranches) {
+		double counter = 0;
+		double x;
+
+		double Mvalue = M() + thetaCommon;
+
+		for (int i = 0; i < Nb_CDS; i++) {
+			x = X() + thetaTranches;
+			if (x < (C - corr*Mvalue) / sqrt(1 - corr*corr)) { counter++; }
+		}
+		counter = std::min(std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0), K2 - K1) / (K2 - K1);		//Normalization of counter in K1 and K2
+																										//counter *= (1 - R) / Nb_CDS;
+		return counter;
+	};
+
 
 };
 

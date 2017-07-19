@@ -24,8 +24,6 @@ double MCPROJ::GaussianPricer::expected_Loss() {
 		return (BivariateNormalCDF(-K11, m_C, -sqrt(1 - m_corr*m_corr)) - BivariateNormalCDF(-K21, m_C, -sqrt(1 - m_corr*m_corr))) * (1 - m_R) / (m_K2 - m_K1);
 	}
 
-
-
 };
 
 
@@ -42,6 +40,87 @@ std::vector<double> MCPROJ::GaussianPricer::expected_LossMC(int N) {
 	return MCPROJ::monte_carlo(N, gauss);
 
 }
+
+double MCPROJ::GaussianPricer::derivativeOfVarTranches(int N, double theta) {
+	double x;
+	double res = 0;
+	for (int j = 0; j < N; j++) {
+		x = importance_sampling_tranches(theta);
+		res += x;
+	}
+	res /= (double)N;
+	
+	return res;
+
+};
+
+double MCPROJ::GaussianPricer::importance_sampling_tranches(double theta)
+{
+	double counter = 0;
+	double x;
+	double sum = 0;
+
+	double Mvalue = m_G->operator()();
+
+	for (int i = 0; i < m_Nb_CDS; i++) {
+		x = m_G->operator()();
+		sum += x;
+		if (x < (m_C - m_corr*Mvalue) / sqrt(1 - m_corr*m_corr)) { counter++; }
+	}
+	counter = std::min(std::max((counter*(1 - m_R) / m_Nb_CDS) - m_K1, 0.0), m_K2 - m_K1) / (m_K2 - m_K1);		//Normalization of counter in K1 and K2
+	
+	return (m_Nb_CDS * theta - sum) * counter * counter * exp(-theta * sum + m_Nb_CDS * theta * theta / 2);
+	
+};
+
+double MCPROJ::GaussianPricer::derivativeOfVarCommon(int N, double theta) {
+	double x;
+	double res = 0;
+	for (int j = 0; j < N; j++) {
+		x = importance_sampling_common(theta);
+		res += x;
+	}
+	res /= (double)N;
+
+	return res;
+
+};
+
+double MCPROJ::GaussianPricer::importance_sampling_common(double theta)
+{
+	double counter = 0;
+	double x;
+	double sum = 0;
+
+	double Mvalue = m_G -> operator()();
+
+	for (int i = 0; i < m_Nb_CDS; i++) {
+		x = m_G -> operator()();
+		if (x < (m_C - m_corr*Mvalue) / sqrt(1 - m_corr*m_corr)) { counter++; }
+	}
+	counter = std::min(std::max((counter*(1 - m_R) / m_Nb_CDS) - m_K1, 0.0), m_K2 - m_K1) / (m_K2 - m_K1);		//Normalization of counter in K1 and K2
+
+	return (theta - Mvalue) * counter * counter * exp(-theta * Mvalue  +  theta * theta / 2);
+
+}
+std::vector<double> MCPROJ::GaussianPricer::expected_LossMCVR(int N, double thetaCommon, double thetaTranches)
+{
+	std::vector<double> result(3, 0.0);
+	double x;
+	for (int j = 0; j < N; j++) {
+		x = MCPROJ::percentage_defaultVR(*m_G, *m_G, m_C, m_corr, m_R, m_Nb_CDS, m_K1, m_K2, thetaCommon, thetaTranches);
+		result[0] += x;
+		result[1] += x*x;
+	}
+	result[0] /= (double)N;
+	result[1] = (result[1] - N*result[0] * result[0]) / (double)(N - 1);
+	result[2] = 1.96*sqrt(result[1] / (double)N);
+	return result;
+
+};
+
+
+
 double MCPROJ::GaussianPricer::expected_LossQMC(int N, std::string Qtype)
 {
 	double result = 0.0;

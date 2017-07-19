@@ -1,7 +1,7 @@
 /*!
 Gaussian Pricer: CDO Tranche Pricing, Monte Carlo Project
 
-Author: Abhishek MUKHOPADHYAY/ Carlo Pulcini
+Author: Abhishek MUKHOPADHYAY/ Carlo PULCINI
 
 Date: 11/03/2017
 
@@ -9,6 +9,7 @@ Version 1.0
 */
 
 
+#include "Generators.h"
 #include "IPricer.h"
 #include "Monte_Carlo.h"
 #include "MCPROJ_Tools.h"
@@ -42,6 +43,16 @@ namespace MCPROJ{
 
 		std::vector<double> expected_LossMC(int N) ;
 
+		double derivativeOfVarTranches(int N, double theta);
+
+		double importance_sampling_tranches(double theta);
+		
+		double derivativeOfVarCommon(int N, double theta);
+
+		double importance_sampling_common(double theta);
+
+		std::vector<double> expected_LossMCVR(int N, double thetaCommon, double thetaTranches);
+
 		double expected_LossQMC(int N, std::string Qtype);
 
 		double percentage_defaultQMCH(double C, double corr, double R, int Nb_CDS, double K1, double	K2);
@@ -70,5 +81,3 @@ namespace MCPROJ{
 
 
 #endif // !_GAUSSIAN_PRICER_H
-
-

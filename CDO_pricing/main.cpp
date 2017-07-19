@@ -6,6 +6,7 @@
 #include "zero_search.h"
 #include "QMCGenerators.h"
 #include "Printing.h"
+#include "Newton.h"
 
 
 using namespace MCPROJ;
@@ -145,29 +146,54 @@ int main() {
 
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
 
+	std::cout << "Gauss Closed" << std::endl;
 	std::cout << Gauss.expected_Loss() << std::endl ;
 
 	std::vector<double> vect = Gauss.expected_LossMC(10000);
+	std::cout << "Gauss MonteCarlo" << std::endl;
 	std::cout << vect[0] << "    " << vect[1] << "    " << vect[2] << std::endl;
 
 	double rofl = Gauss.expected_LossQMC(100, "Halton");
+	std::cout << "Gauss QMC Halton" << std::endl;
 	std::cout << rofl << std::endl;
 
 	double rofl1 = Gauss.expected_LossQMC(100, "Kakutani");
+	std::cout << "Gauss QMC Kakutani" << std::endl;
 	std::cout << rofl1 << std::endl;
 
+	/*Variance Reduction - Importance Sampling*/
+	
+	int iterMax = 100;
+	double tol = 1.e-4;
+	int NN = 1.e3; 
+	
+	NewtonSolver newton(iterMax, tol);
+	
+	std::function<double(double)> f1 = [&Gauss, NN](double theta) {return Gauss.derivativeOfVarCommon(NN, theta); };
+	
+	double thetaCommon = newton.Solve(f1, 0.0);	
+
+	std::function<double(double)> f2 = [&Gauss, NN](double theta) {return Gauss.derivativeOfVarTranches(NN, theta); };
+
+	double thetaTranches = newton.Solve(f2, 0.0);
+
+	std::vector<double> vectVR = Gauss.expected_LossMCVR(10000, thetaCommon, thetaTranches);
+	std::cout << "Gauss Variance Reduction" << std::endl;
+	std::cout << vectVR[0] << "    " << vectVR[1] << "    " << vectVR[2] << std::endl;
 	
 
 	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
 
 	std::vector<double> vect2 = NIG.expected_LossMC(100);
+	std::cout << "NIG MonteCarlo" << std::endl;
 	std::cout << vect2[0] << "    " << vect2[1] << "    " << vect2[2] << std::endl;
 
-	
 	double vect_667 = NIG.expected_LossQMC(100, "Halton");
+	std::cout << "NIG QMC Halton" << std::endl;
 	std::cout << vect_667 << std::endl;
 
 	double vect_668 = NIG.expected_LossQMC(100, "Kakutani");
+	std::cout << "NIG QMC Kakutani" << std::endl;
 	std::cout << vect_668 << std::endl;
 
 	/**************************************/
