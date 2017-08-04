@@ -122,6 +122,7 @@
     <ClCompile Include="MCPROJ_Tools.cpp" />
     <ClCompile Include="NIGPricer.cpp" />
     <ClCompile Include="Newton.cpp" />
+    <ClCompile Include="Quantisation.cpp" />
     <ClCompile Include="Printing.cpp" />
     <ClCompile Include="QMCGenerators.cpp" />
     <ClCompile Include="SteinPricer.cpp" />
@@ -129,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="GaussianPricer.h" />
     <ClInclude Include="Generators.h" />
+    <ClInclude Include="Quantisation.h" />
     <ClInclude Include="Newton.h" />
     <ClInclude Include="Printing.h" />
     <ClInclude Include="inverse_function.h" />

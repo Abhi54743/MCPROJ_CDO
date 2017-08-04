@@ -6,7 +6,7 @@ MCPROJ::NewtonSolver::NewtonSolver(int iterMax, double tol) : m_iterMax(iterMax)
 double MCPROJ::NewtonSolver::Solve(std::function<double(double)> f, double firstGuess)
 {
 	double eps = 0.001;
-	std::function<double(double)> fprime = [f, eps](double theta) {return (f(theta + eps) - f(theta - eps)) / eps; };
+	std::function<double(double)> fprime = [f, eps](double theta) {return (f(theta + eps) - f(theta - eps)) / (2*eps); };
 
 	double fx, fx1;
 	double x1 = firstGuess;

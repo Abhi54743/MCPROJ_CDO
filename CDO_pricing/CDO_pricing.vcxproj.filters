@@ -41,6 +41,9 @@
     <ClCompile Include="Newton.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Quantisation.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inverse_function.h">
@@ -80,6 +83,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Newton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quantisation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

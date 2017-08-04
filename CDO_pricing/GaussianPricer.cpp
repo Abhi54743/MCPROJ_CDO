@@ -12,6 +12,7 @@ MCPROJ::GaussianPricer::GaussianPricer(double q, double corr, double R, int	Nb_C
 
 	m_C = normal_CDF_inverse(q);
 
+
 };
 
 
@@ -109,6 +110,7 @@ std::vector<double> MCPROJ::GaussianPricer::expected_LossMCVR(int N, double thet
 	double x;
 	for (int j = 0; j < N; j++) {
 		x = MCPROJ::percentage_defaultVR(*m_G, *m_G, m_C, m_corr, m_R, m_Nb_CDS, m_K1, m_K2, thetaCommon, thetaTranches);
+		x *= exp((-thetaCommon * thetaCommon - m_Nb_CDS * thetaTranches * thetaTranches) / 2);
 		result[0] += x;
 		result[1] += x*x;
 	}

@@ -1,6 +1,6 @@
 #include "SteinPricer.h"
 
-std::vector<double> GaussianSteinPricer::price(int N)
+std::vector<double> MCPROJ::GaussianSteinPricer::price(int N)
 {
 	if (m_dist_type == "Gaussian") {
 
@@ -16,7 +16,7 @@ std::vector<double> GaussianSteinPricer::price(int N)
 	else throw std::exception("only Gaussian or NIG are supported");
 }
 
-double GaussianSteinPricer::operator()()
+double MCPROJ::GaussianSteinPricer::operator()()
 {
 	if (m_dist_type == "Gaussian") {
 		double u = m_normal_variable->operator()();
@@ -31,7 +31,7 @@ double GaussianSteinPricer::operator()()
 	else throw std::exception("only Gaussian or NIG are supported");
 }
 
-double GaussianSteinPricer::conditionallyExpectedPrice(double u, double K)
+double MCPROJ::GaussianSteinPricer::conditionallyExpectedPrice(double u, double K)
 {
 	double mu, sigma, third_moment;
 
@@ -69,23 +69,23 @@ double GaussianSteinPricer::conditionallyExpectedPrice(double u, double K)
 
 }
 
-std::vector<double> PoissonSteinPricer::price(int N)
+std::vector<double> MCPROJ::PoissonSteinPricer::price(int N)
 {
 	if (m_dist_type == "Gaussian") {
 
-		PoissonSteinPricer gaussStein(m_dist_type, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2);
+		MCPROJ::PoissonSteinPricer gaussStein(m_dist_type, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2);
 
 		return MCPROJ::monte_carlo(N, gaussStein);
 	}
 	else if (m_dist_type == "NIG") {
-		PoissonSteinPricer gaussStein(m_dist_type, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2, m_alpha, m_beta, m_gridSize);
+		MCPROJ::PoissonSteinPricer gaussStein(m_dist_type, m_q, m_corr, m_R, m_Nb_CDS, m_K1, m_K2, m_alpha, m_beta, m_gridSize);
 
 		return MCPROJ::monte_carlo(N, gaussStein);
 	}
 	else throw std::exception("only Gaussian or NIG are supported");
 }
 
-double PoissonSteinPricer::operator()()
+double MCPROJ::PoissonSteinPricer::operator()()
 {
 	if (m_dist_type == "Gaussian") {
 		double u = m_normal_variable->operator()();
@@ -100,7 +100,7 @@ double PoissonSteinPricer::operator()()
 	else throw std::exception("only Gaussian or NIG are supported");
 }
 
-double PoissonSteinPricer::conditionallyExpectedPrice(double u, double K)
+double MCPROJ::PoissonSteinPricer::conditionallyExpectedPrice(double u, double K)
 {
 	double default_probability;
 

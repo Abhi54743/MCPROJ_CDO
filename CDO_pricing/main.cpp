@@ -9,6 +9,13 @@
 #include "Newton.h"
 
 
+
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+using namespace std;
+
 using namespace MCPROJ;
 
 //This is the main
@@ -103,8 +110,8 @@ std::vector<double> optimizer_Theta(int Nb_CDS, Gen X, double q, double corr, do
 */
 
 int main() {
-	
-	double q = 0.5;		//default probability
+	/*
+	double q = 0.05;	//default probability
 	double corr = 0.3;	//correlation between CDS
 	double R = 0;		//recovery rate
 	int	   Nb_CDS = 100;
@@ -114,9 +121,9 @@ int main() {
 	double beta = 0.5;
 
 	int gridSize = 1000; //for NIG
-
+	*/
+	/***************************** STEIN METHOD********************************************/
 	/*
-
 	PoissonSteinPricer PoissonStein(std::string("Gaussian"), q, corr, R, Nb_CDS, K1, K2);
 
 	std::vector<double> vect9 = PoissonStein.price(10000);
@@ -128,22 +135,24 @@ int main() {
 	std::vector<double> vect10 = PoissonStein2.price(100);
 
 	std::cout << vect10[0] << "    " << vect10[1] << "    " << vect10[2] << std::endl;
-	
+
 	GaussianSteinPricer GaussStein(std::string("Gaussian"), q, corr, R, Nb_CDS, K1, K2);
 
 	std::vector<double> vect3 = GaussStein.price(10000);
 
 	std::cout << vect3[0] << "    " << vect3[1] << "    " << vect3[2] << std::endl;
-	
+
 	GaussianSteinPricer GaussStein2(std::string("NIG"), q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
 
 	std::vector<double> vect4 = GaussStein2.price(1000);
 
 	std::cout << vect4[0] << "    " << vect4[1] << "    " << vect4[2] << std::endl;
-	
-	
-	*/
 
+	*/
+	/**********************************************************************************************/
+
+	/**********************************************************************************************/
+	/*
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
 
 	std::cout << "Gauss Closed" << std::endl;
@@ -160,18 +169,20 @@ int main() {
 	double rofl1 = Gauss.expected_LossQMC(100, "Kakutani");
 	std::cout << "Gauss QMC Kakutani" << std::endl;
 	std::cout << rofl1 << std::endl;
+	*/
 
 	/*Variance Reduction - Importance Sampling*/
-	
+
+	/*
 	int iterMax = 100;
 	double tol = 1.e-4;
-	int NN = 1.e3; 
-	
+	int NN = 1.e3;
+
 	NewtonSolver newton(iterMax, tol);
-	
+
 	std::function<double(double)> f1 = [&Gauss, NN](double theta) {return Gauss.derivativeOfVarCommon(NN, theta); };
-	
-	double thetaCommon = newton.Solve(f1, 0.0);	
+
+	double thetaCommon = newton.Solve(f1, 0.0);
 
 	std::function<double(double)> f2 = [&Gauss, NN](double theta) {return Gauss.derivativeOfVarTranches(NN, theta); };
 
@@ -180,7 +191,7 @@ int main() {
 	std::vector<double> vectVR = Gauss.expected_LossMCVR(10000, thetaCommon, thetaTranches);
 	std::cout << "Gauss Variance Reduction" << std::endl;
 	std::cout << vectVR[0] << "    " << vectVR[1] << "    " << vectVR[2] << std::endl;
-	
+
 
 	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
 
@@ -195,82 +206,77 @@ int main() {
 	double vect_668 = NIG.expected_LossQMC(100, "Kakutani");
 	std::cout << "NIG QMC Kakutani" << std::endl;
 	std::cout << vect_668 << std::endl;
-
-	/**************************************/
-	/*
-	Kakutani2D KGen(2, 3, 10);
-	for (int i = 0; i < 30; i++) {
-		std::vector<double> lol = KGen();
-		std::cout<<lol[0]<< " \t " <<lol[1]<<std::endl;
-	}
-
-	std::vector<int> p = KGen.double2piadic(1 / 5.0 + 3 / 25.0, 5);
-	for (int i = 0; i < p.size(); i++) {
-		std::cout << p[i] << std::endl;
-	}
-
-	double a = KGen.padic2double(p, 5);
-	std::cout << a << std::endl;*/
-	int lol;
-	std::cin >> lol;
-
-	return 0;
-
-	/*generator gen;
-	normal_rv G(gen, normal_dist(0, 1));
-	gen.seed(static_cast<unsigned int>(std::time(0)));
-	percent_default<normal_rv> pd1(G, 0.2, 0.7);                        //percentage default generator with normal random
-
-	std::vector<double>theta = optimizer_Theta(Nb_CDS, G, q, corr, 0.2, 0.7);
-	
-	percent_default_vr<normal_rv> pd2(G, 0.2, 0.7, theta);   //percentage default generator with normal random
-
-	
-	std::vector<double> result = monte_carlo(1000, pd1);
-
-	std::cout << "without vr" << result[0] <<'\t'<< result[1] << '\t' << result[2] << std::endl;
-
-	result = monte_carlo(1000, pd2);
-	std::cout << "vr" <<result[0] << '\t' << result[1] << '\t' << result[2] << std::endl;
-	
-	std::cout << expected_loss(0.2, 0.7) << std::endl;
 	*/
 
-	
+	/**************************************/
+
+
+
+
 	/**************************************A SORT OF FINAL MAIN**************************************/
 
-	/*
+	//init
+	double q = 0.50;	//default probability
+	double corr = 0.3;	//correlation between CDS
+	double R = 0;		//recovery rate
+	int	   Nb_CDS = 100;
+	double K1 = 0.2;
+	double K2 = 0.7;
+	double alpha = 1;
+	double beta = 0.5;
+
+	int gridSize = 1000; //for NIG
+
 
 	Printer Printer;
 	//PART 1: CLOSED FORMULA AND MONTECARLO
 	//1.A.I: GUASSIAN COPULA, R = 0
 
 	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
+	//GaussianSteinPricer Stein(std::string("Gaussian"), q, corr, R, Nb_CDS, K1, K2);
 
 	//close formula
 	clock_t begin = clock();
 
 	double res = Gauss.expected_Loss();
-
+	
 	clock_t end = clock();
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+	std::cout << "Gauss Closed" << std::endl;
+	std::cout << res << ";  time: " << elapsed_secs << "\n" << std::endl;
 
 	Printer.printOutClosedFormula(res, "Gaussian", elapsed_secs);
 
 	//montecarlo
-	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
+	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000 };
 
 	for (int j = 0; j < sizeof(mcIterations); j++)
 	{
 		clock_t begin = clock();
 
 		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
+		//std::vector<double> res2 = Stein.price(mcIterations[j]);
 
 		clock_t end = clock();
 		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
+		std::cout << "Gauss MonteCarlo: " << mcIterations[j] << " iterations" << std::endl;
+		std::cout << res[0] << "    " << res[2] << ";  time: " << elapsed_secs << "\n" <<std::endl;
+
+		//std::cout << "Stein: " << mcIterations[j] << " iterations" << std::endl;
+		//std::cout << res2[0] << "    " << res2[2] << ";  time: " << elapsed_secs << "\n" << std::endl;
+
 		Printer.printOutMonteCarlo(res, "Gaussian", mcIterations[j], elapsed_secs);
 	}
+	
+	int lol;
+	std::cin >> lol;
+
+	return 0;
+
+	/*
+
 
 	//1.A.II: GUASSIAN COPULA, R != 0
 
