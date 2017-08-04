@@ -20,107 +20,26 @@ using namespace MCPROJ;
 
 //This is the main
 
-/*
-THIS MAY BE USEFUL FOR NEWTON, BUT PROBABLY NOT. KEEP IT FOR NOW
-template <typename Gen>
-std::vector<double> grad_f(int i, std::vector<double> theta, std::vector<std::vector<double>> stored,
-							int Nb_CDS, Gen X, double q, double corr, double K1, double K2) {//ALL these will be attributes 
-	std::vector<double> res(Nb_CDS + 1, 0);
-	double C = normal_CDF_inverse(q);
-	for (int j = 0; j < Nb_CDS + 1; j++) {
-		for (int k = 0; k < 1000; k++) {
-			int counter = 0;
-			double scalar_product = theta[0] * stored[k][0];
-			double square_theta = theta[0] * theta[0];
-			for (int r = 1; r < Nb_CDS+1; r++) {
-				if (stored[k][r] < (C - corr*stored[k][0]) / sqrt(1 - corr*corr)) { counter++; }
-				scalar_product += theta[r] * stored[k][r];
-				square_theta += theta[r] * theta[r];
-			}
-			double A = std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0) / (K2 - K1);
-			A *= exp(-scalar_product + square_theta / 2);
-			res[j] += A*((theta[j] - stored[k][j])*(theta[i] - stored[k][i]) + (i == j ? 1 : 0));
-			res[j] /= 1000;
-		}
-	}
-	return res;
-}
-
-template <typename Gen>
-std::vector<double> test(std::vector<double> theta, std::vector<std::vector<double>> stored,
-	int Nb_CDS, Gen X, double q, double corr, double K1, double K2) {//ALL these will be attributes 
-	std::vector<double> res(Nb_CDS + 1, 0);
-	double C = normal_CDF_inverse(q);
-	for (int j = 0; j < Nb_CDS + 1; j++) {
-		for (int k = 0; k < 1000; k++) {
-			int counter = 0;
-			double scalar_product = theta[0] * stored[k][0];
-			double square_theta = theta[0] * theta[0];
-			for (int r = 1; r < Nb_CDS + 1; r++) {
-				if (stored[k][r] < (C - corr*stored[k][0]) / sqrt(1 - corr*corr)) { counter++; }
-				scalar_product += theta[r] * stored[k][r];
-				square_theta += theta[r] * theta[r];
-			}
-			double A = std::max((counter*(1 - R) / Nb_CDS) - K1, 0.0) / (K2 - K1);
-			A *= exp(-scalar_product + square_theta / 2);
-			res[j] += A*(theta[j] - stored[k][j]);
-			res[j] /= 1000;
-		}
-	}
-	return res;
-}
-
-template <typename Gen>
-std::vector<double> optimizer_Theta(int Nb_CDS, Gen X, double q, double corr, double K1, double K2) //ALL these will be attributes
+struct initVariables
 {
-	double C = normal_CDF_inverse(q);
-	std::vector<std::vector<double>> stored (1000, std::vector<double>(Nb_CDS+1));
-	for (int i = 0; i < 1000; i++) {
-		for (int j = 0; j < Nb_CDS + 1; j++)
-		{
-			stored[i][j] = X();
-		}
-	}
+	initVariables(double q, double corr, double R, int Nb_CDS, double K1, double K2, double alpha, double beta, int gridSize)
+		: q(q), corr(corr), R(R), Nb_CDS(Nb_CDS), K1(K1), K2(K2), alpha(alpha), beta(beta), gridSize(gridSize) {}
 
-
-
-	//algorithm
-	std::vector<double> theta0(Nb_CDS + 1, 0);
-
-	generator gen;
-	boost::random::uniform_int_distribution<> dist(0, 100);
-
-	double step = 1e-1;
-
-	double t = 0;
-	std::vector<double> eps(Nb_CDS + 1, 1e-5);
-	while (test(theta0, stored, Nb_CDS, X, q, corr, K1, K2)> eps) { //ALL these will be attributes ) > eps) {
-		t += 1;
-		std::cout << "iteration " << t << std::endl;
-		int i = dist(gen);
-		for(int y=0; y < Nb_CDS + 1; y++){
-		theta0[y] -= step / (sqrt(t)) * grad_f(i, theta0, stored,
-											Nb_CDS, X, q, corr, K1, K2)[y]; //ALL these will be attributes );
-		}
-	} 
-
-	return theta0;
-
+	double q;	//default probability
+	double corr;//correlation between common factor and independent factors
+	double R;	//recovery rate
+	int Nb_CDS;	
+	double K1;	//tranche between K1 and K2
+	double K2;
+	double alpha;//alpha and beta are NIG parameters
+	double beta;
+	int gridSize;//for NIG
 };
-*/
+
 
 int main() {
 	/*
-	double q = 0.05;	//default probability
-	double corr = 0.3;	//correlation between CDS
-	double R = 0;		//recovery rate
-	int	   Nb_CDS = 100;
-	double K1 = 0.2;
-	double K2 = 0.7;
-	double alpha = 1;
-	double beta = 0.5;
-
-	int gridSize = 1000; //for NIG
+	
 	*/
 	/***************************** STEIN METHOD********************************************/
 	/*
@@ -215,26 +134,17 @@ int main() {
 
 	/**************************************A SORT OF FINAL MAIN**************************************/
 
-	//init
-	double q = 0.50;	//default probability
-	double corr = 0.3;	//correlation between CDS
-	double R = 0;		//recovery rate
-	int	   Nb_CDS = 100;
-	double K1 = 0.2;
-	double K2 = 0.7;
-	double alpha = 1;
-	double beta = 0.5;
-
-	int gridSize = 1000; //for NIG
-
+	
 
 	Printer Printer;
 	//PART 1: CLOSED FORMULA AND MONTECARLO
+	//1.A: GAUSSIAN COPULA
 	//1.A.I: GUASSIAN COPULA, R = 0
 
-	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
-	//GaussianSteinPricer Stein(std::string("Gaussian"), q, corr, R, Nb_CDS, K1, K2);
+	initVariables init(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
 
+	GaussianPricer Gauss(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+	
 	//close formula
 	clock_t begin = clock();
 
@@ -243,127 +153,330 @@ int main() {
 	clock_t end = clock();
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
-	std::cout << "Gauss Closed" << std::endl;
-	std::cout << res << ";  time: " << elapsed_secs << "\n" << std::endl;
+	std::cout << "Gauss Closed without Recovery Rate" << std::endl;
+	std::cout << res << "\n" << std::endl;
 
-	Printer.printOutClosedFormula(res, "Gaussian", elapsed_secs);
+	Printer.printOutClosedFormula(res, "Gaussian", init.q, init.corr, init.R, init.Nb_CDS, elapsed_secs);
 
 	//montecarlo
-	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000 };
+	std::vector<int> mcIterations;
 
-	for (int j = 0; j < sizeof(mcIterations); j++)
+	int start = 10000;
+	int endmc = 20000;
+	int step = 10000;
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+	
+	std::cout << "Gauss MonteCarlo without Recovery Rate is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
 	{
 		clock_t begin = clock();
 
 		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "Gaussian", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//1.A.II: GUASSIAN COPULA, R = 0.2
+	
+	init = initVariables(0.5, 0.3, 0.2, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	Gauss = GaussianPricer(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//close formula
+	begin = clock();
+
+	res = Gauss.expected_Loss();
+
+	end = clock();
+	elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+	std::cout << "Gauss Closed with Recovery Rate" << std::endl;
+	std::cout << res << "\n" << std::endl;
+
+	Printer.printOutClosedFormula(res, "Gaussian", init.q, init.corr, init.R, init.Nb_CDS, elapsed_secs);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Gauss MonteCarlo with Recovery Rate is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "Gaussian", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+	
+
+	//1.A.III: GUASSIAN COPULA, R = 0 and R!=0, VARIANCE REDUCTION
+	//...
+	//...aaaaaaaaaaaaaaaaaaaaa
+	//...
+
+	//1.B: NIG COPULA
+	//1.B.I: NIG COPULA, R = 0
+
+	init = initVariables(0.5, 0.3, 0.0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	NIGPricer NIG(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2, init.alpha, init.beta, init.gridSize);
+
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "NIG MonteCarlo without Recovery Rate is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "NIG", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//1.B.I: NIG COPULA, R = 0.2
+
+	init = initVariables(0.5, 0.3, 0.2, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	NIG = NIGPricer(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2, init.alpha, init.beta, init.gridSize);
+
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "NIG MonteCarlo with Recovery Rate is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutMonteCarlo(res, "NIG", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//1.C: Other parameters effect
+	//...
+	//...
+	//...
+
+	//PART 2 Quasi Monte Carlo
+
+	//To decide if modify in order to generate psuedo-number BEFORE pricing or DURING pricing (now it is during pricing,
+	//then QMC is not faster than MC, it is even slower)
+
+	//2.A: QMC for GAUSSIAN COPULA
+	//2.A.I: GUASSIAN COPULA, Halton
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	Gauss = GaussianPricer(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Halton Gauss Quasi MonteCarlo is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		double res = Gauss.expected_LossQMC(mcIterations[j], "Halton");
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutQuasiMonteCarlo(res, "Gaussian", "Halton", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//2.A.II: GUASSIAN COPULA, Kakutani
+	
+	std::cout << "Kakutani Gauss Quasi MonteCarlo is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		double res = Gauss.expected_LossQMC(mcIterations[j], "Kakutani");
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutQuasiMonteCarlo(res, "Gaussian", "Kakutani", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//2.B: QMC for NIG COPULA
+	//2.B.I NIG COPULA, Halton
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	NIG = NIGPricer(init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2, init.alpha, init.beta, init.gridSize);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Halton NIG Quasi MonteCarlo is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		double res = NIG.expected_LossQMC(mcIterations[j], "Halton");
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutQuasiMonteCarlo(res, "NIG", "Halton", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	std::cout << "Kakutani NIG Quasi MonteCarlo is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		double res = NIG.expected_LossQMC(mcIterations[j], "Kakutani");
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutQuasiMonteCarlo(res, "NIG", "Kakutani", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//PART 3 Stein Method
+	
+	//3.A: Stein for GAUSSIAN COPULA
+	//3.A.I: GUASSIAN COPULA, Gaussian Stein
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	GaussianSteinPricer GaussStein(std::string("Gaussian"), init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Stein with Gaussian approx for Gauss copula is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		vector<double> res = GaussStein.price(mcIterations[j]);
 		//std::vector<double> res2 = Stein.price(mcIterations[j]);
 
 		clock_t end = clock();
 		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
-		std::cout << "Gauss MonteCarlo: " << mcIterations[j] << " iterations" << std::endl;
-		std::cout << res[0] << "    " << res[2] << ";  time: " << elapsed_secs << "\n" <<std::endl;
-
-		//std::cout << "Stein: " << mcIterations[j] << " iterations" << std::endl;
-		//std::cout << res2[0] << "    " << res2[2] << ";  time: " << elapsed_secs << "\n" << std::endl;
-
-		Printer.printOutMonteCarlo(res, "Gaussian", mcIterations[j], elapsed_secs);
+		Printer.printOutStein(res, "GaussApprox", "Gauss", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
 	}
-	
+
+	//3.A.II: GUASSIAN COPULA, Poisson Stein
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	PoissonSteinPricer PoissonStein(std::string("Gaussian"), init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Stein with Poisson approx for Gauss copula is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		vector<double> res = PoissonStein.price(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutStein(res, "PoissApprox", "Gauss", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//3.B: Stein for NIG COPULA
+	//3.B.I: NIG COPULA, Gaussian Stein
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	GaussStein = GaussianSteinPricer(std::string("NIG"), init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Stein with Gaussian approx for NIG copula is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		vector<double> res = GaussStein.price(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutStein(res, "GaussApprox", "NIG", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+	//3.B.II: NIG COPULA, Poisson Stein
+
+	init = initVariables(0.5, 0.3, 0, 100, 0.2, 0.7, 1, 0.5, 1000);
+
+	PoissonStein = PoissonSteinPricer(std::string("NIG"), init.q, init.corr, init.R, init.Nb_CDS, init.K1, init.K2);
+
+	//montecarlo
+	mcIterations.clear();
+
+	for (int i = start; i < endmc + step; i += step)
+		mcIterations.push_back(i);
+
+	std::cout << "Stein with Poisson approx for NIG coupla is working, see printed txt" << "\n" << std::endl;
+	for (int j = 0; j < mcIterations.size(); j++)
+	{
+		clock_t begin = clock();
+
+		vector<double> res = PoissonStein.price(mcIterations[j]);
+
+		clock_t end = clock();
+		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+		Printer.printOutStein(res, "PoissApprox", "NIG", init.q, init.corr, init.R, init.Nb_CDS, mcIterations[j], elapsed_secs);
+	}
+
+
+
 	int lol;
 	std::cin >> lol;
 
 	return 0;
 
-	/*
-
-
-	//1.A.II: GUASSIAN COPULA, R != 0
-
-	R = 0.2;//to decide
-
-	GaussianPricer Gauss(q, corr, R, Nb_CDS, K1, K2);
-
-	//close formula
-	clock_t begin = clock();
-
-	double res = Gauss.expected_Loss();
-
-	clock_t end = clock();
-	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-	Printer.printOutClosedFormula(res, "Gaussian", elapsed_secs);
-
-	//montecarlo
-	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
-
-	for (int j = 0; j < sizeof(mcIterations); j++)
-	{
-		clock_t begin = clock();
-
-		std::vector<double> res = Gauss.expected_LossMC(mcIterations[j]);
-
-		clock_t end = clock();
-		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-		Printer.printOutMonteCarlo(res, "Gaussian", mcIterations[j], elapsed_secs);
-	}
-
-	//1.A.III: GUASSIAN COPULA, R = 0 and R!=0, VARIANCE REDUCTION
 	
-	//TO DO
-	
-
-	//1.B.I: NIG COPULA, R = 0
-
-	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
-
-	//montecarlo
-	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
-
-	for (int j = 0; j < sizeof(mcIterations); j++)
-	{
-		clock_t begin = clock();
-
-		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
-
-		clock_t end = clock();
-		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-		Printer.printOutMonteCarlo(res, "NIG", mcIterations[j], elapsed_secs);
-	}
-
-	//1.B.II: NIG COPULA, R != 0
-
-	NIGPricer NIG(q, corr, R, Nb_CDS, K1, K2, alpha, beta, gridSize);
-
-	//montecarlo
-	int mcIterations[] = { 100, 500, 1000, 5000, 10000, 50000, 100000, 500000, 1000000 };
-
-	for (int j = 0; j < sizeof(mcIterations); j++)
-	{
-		clock_t begin = clock();
-
-		std::vector<double> res = NIG.expected_LossMC(mcIterations[j]);
-
-		clock_t end = clock();
-		double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-		Printer.printOutMonteCarlo(res, "NIG", mcIterations[j], elapsed_secs);
-	}
-
-	//1.C: Other parameters effect
-	
-	//TO DECIDE
-	
-
-
-	//2.A: QMC Gaussian
-	
-	//To decide if modify in order to generate psuedo-number BEFORE pricing or DURING pricing (now it is during pricing,
-	//then QMC is not faster than MC, it is even slower)
-	
-	*/
 
 	/*************************************************************************************************************/
 

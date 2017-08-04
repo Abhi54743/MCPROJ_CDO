@@ -10,9 +10,12 @@ namespace MCPROJ {
 	{
 	
 	public:
-		void printOutClosedFormula(double res, std::string typeOfVariable, double timeInSeconds);
-		void printOutMonteCarlo(std::vector<double> res, std::string typeOfVariable, int N, double timeInSeconds);
-	
+		void printOutClosedFormula(double res, std::string typeOfVariable, double q, double corr, double R, int Nb_CDS, double timeInSeconds);
+		void printOutMonteCarlo(std::vector<double> res, std::string typeOfVariable, double q, double corr,	double R, int Nb_CDS, int N, double timeInSeconds);
+		void printOutQuasiMonteCarlo(double res, std::string typeOfVariable, std::string typeOfPseudo, double q, double corr, double R, int Nb_CDS, int N, double timeInSeconds);
+
+		void printOutStein(std::vector<double> res, std::string typeOfApprox, std::string typeOfVariable, double q, double corr, double R, int Nb_CDS, int N, double timeInSeconds);
+
 		std::string seconds2Time(double timeInSeconds);
 
 	};
